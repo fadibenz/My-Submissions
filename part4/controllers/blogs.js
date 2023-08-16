@@ -1,10 +1,11 @@
 const blogsRouter = require("express").Router();
+const { response } = require("express");
 const blog = require("../models/blog");
 const Blog = require("../models/blog");
 const User = require("../models/user");
 
 blogsRouter.get("/", async (request, response) => {
-  const blogs = await Blog.find({}).populate("user", { name: 1, username: 1 });
+  const blogs = await Blog.find({});
   response.status(200).json(blogs);
 });
 
@@ -16,13 +17,14 @@ blogsRouter.post("/", async (request, response) => {
   }
 
   const user = request.user;
-  const { title, author, url, likes = 0 } = request.body;
+  const { title, author, url, likes = 0, comments = [] } = request.body;
 
   const blog = new Blog({
     title,
     author,
     url,
     likes,
+    comments,
     user: user._id,
   });
   try {
@@ -50,7 +52,7 @@ blogsRouter.delete("/:id", async (request, response) => {
       response.status(401).json({ error: "Not authorized" });
     }
   } catch (error) {
-    response.status(400).json({ message: "Error deleting blog." });
+    response.status(400).json({ message: error });
   }
 });
 
@@ -62,6 +64,7 @@ blogsRouter.put("/:id", async (request, response) => {
     author: body.author,
     url: body.url,
     likes: body.likes,
+    comments: body.comments,
   };
 
   try {
@@ -77,5 +80,6 @@ blogsRouter.put("/:id", async (request, response) => {
     response.status(400).json({ message: "Error updating blog likes." });
   }
 });
+
 
 module.exports = blogsRouter;

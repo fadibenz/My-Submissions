@@ -1,0 +1,81 @@
+{
+  "notes": [
+    {
+      "id": 1,
+      "content": "custom hooks are awesome"
+    },
+    {
+      "id": 2,
+      "content": "best feature ever <3"
+    },
+    {
+      "content": "fadi wins",
+      "id": 3
+    },
+    {
+      "content": "fadi wins",
+      "id": 4
+    },
+    {
+      "content": "fadi wins",
+      "id": 5
+    },
+    {
+      "content": "fadi wins",
+      "id": 6
+    },
+    {
+      "content": "fadi wins",
+      "id": 7
+    },
+    {
+      "content": "fadi",
+      "id": 8
+    },
+    {
+      "content": "whatever ",
+      "id": 9
+    },
+    {
+      "content": "got it",
+      "id": 10
+    },
+    {
+      "content": "got it",
+      "id": 11
+    },
+    {
+      "content": "got it",
+      "id": 12
+    },
+    {
+      "content": "got it",
+      "id": 13
+    },
+    {
+      "content": "got it",
+      "id": 14
+    },
+    {
+      "content": "got it",
+      "id": 15
+    }
+  ],
+  "persons": [
+    {
+      "id": 1,
+      "name": "Matti Luukkainen",
+      "number": "040-12344565"
+    },
+    {
+      "id": 2,
+      "name": "Tarja Halonen",
+      "number": "040-2223334"
+    },
+    {
+      "name": "fadi",
+      "number": "11112222",
+      "id": 3
+    }
+  ]
+}

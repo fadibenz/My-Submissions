@@ -1,12 +1,27 @@
+GET http://localhost:3003/api/blogs HTTP/1.1
+content-type: application/json
+
+###
+DELETE  http://localhost:3003/api/blogs/64d674bbd6d0aee3c5b55f3e HTTP/1.1
+content-type: application/json
+
+###
+
 POST http://localhost:3003/api/login HTTP/1.1
 content-type: application/json
 
 {
-  "username": "FADD",
-  "password": "fadIIII"
+ "username": "FADDTest",
+  "password": "fadIIII" 
 }
 
 ###
-GET http://localhost:3003/api/users HTTP/1.1
+POST http://localhost:3003/api/users HTTP/1.1
 content-type: application/json
+
+{
+  "name": "Fadi",
+  "username": "FADDTest",
+  "password": "fadIIII" 
+}
 
