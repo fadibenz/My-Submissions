@@ -20,13 +20,26 @@ export const { setUser, removeUser } = userSlice.actions;
 export const logUser = (username, password) => {
   return async (dispatch) => {
     const user = await blogService.login(username, password);
-    if (user) {
-      dispatch(setUser(user));
-    } else {
-      dispatch(createNotification("wrong password or username", 5));
+    if (user.error) {
+      dispatch(createNotification(user.error, 5));
       dispatch(createClass("error", 5));
+    } else {
+      dispatch(setUser(user));
     }
   };
 };
 
+
+
+export const registerUser = (name, username, email, pass) => {
+    return async (dispatch) => {
+      const res = await blogService.register(name, username, email, pass);
+      if (res.error) {
+        dispatch(createNotification(res.error, 5));
+        dispatch(createClass("error", 5));
+      } else {
+        dispatch(setUser(res));
+      }
+    };
+  };
 export default userSlice.reducer;

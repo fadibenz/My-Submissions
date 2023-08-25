@@ -17,6 +17,7 @@ export const { setNotification, removeNotification } =
   notificationSlice.actions;
 
 export const createNotification = (notif, time) => {
+  console.log('notification', notif)
   return async (dispatch) => {
     dispatch(setNotification(notif));
     await new Promise((resolve) => setTimeout(resolve, time * 1000));

@@ -4,7 +4,7 @@ const bcrypt = require("bcryptjs");
 
 userRouter.post("/", async (request, response) => {
   try {
-    const { username, name, password } = request.body;
+    const { username, name, email, password } = request.body;
     if (username.length < 3) {
       return response
         .status(400)
@@ -24,12 +24,13 @@ userRouter.post("/", async (request, response) => {
       username,
       name,
       hashPass,
+      email
     });
 
     const savedUser = await user.save();
     response.status(201).json(savedUser);
   } catch (error) {
-    response.status(400).send(error.message);
+    response.status(400).json({error: error.message});
   }
 });
 

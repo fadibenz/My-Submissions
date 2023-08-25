@@ -1,38 +1,30 @@
-import "./App.css";
+import "./styles/App.css";
 
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { removeUser, setUser } from "./reducers/userReducer";
+import { setUser } from "./reducers/userReducer";
 import { intializeBlogs } from "./reducers/blogReducer";
+import { Route, Routes, useMatch } from "react-router-dom";
 
 import blogService from "./services/blogs";
 
-import Togglable from "./components/Togglable";
-import CreateBlog from "./components/CreateBlog";
-import Users from "./components/Users";
 import Notification from "./components/Notification";
-import Login from "./components/Login";
-import Blogs from "./components/Blogs";
-import { Route, Routes, useMatch, useNavigate } from "react-router-dom";
-import User from "./components/User";
-import Blog from "./components/Blog";
+import Login from "./pages/Login";
+import Blogs from "./pages/Blogs";
+import Blog from "./pages/Blog";
+import Register from "./pages/Register";
+import Menu from "./components/Menu";
+import Search from "./pages/Search";
+import Loading from "./components/Loading";
+import Layout from "./components/Layout";
 
 const App = () => {
-  const [userData, setUserData] = useState([]);
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.user);
   const blogs = useSelector((state) => state.blogs);
-
-  const navigate = useNavigate();
-
-  const match = useMatch("/user/:id");
-  const chosenUser = match
-    ? userData.find((user) => user.id === match.params.id)
-    : null;
 
   const matchB = useMatch("/blog/:id");
   const chosenBlog = matchB
-    ? blogs.find((blog) => blog.id === matchB.params.id)
+    ? blogs.find((blog) => blog._id === matchB.params.id)
     : null;
 
   useEffect(() => {
@@ -45,54 +37,35 @@ const App = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const res = await blogService.getUsers();
-      setUserData(res);
-    };
-    fetchData();
+    dispatch(intializeBlogs());
   }, [dispatch]);
 
-   useEffect(() => {
-     dispatch(intializeBlogs());
-   }, [dispatch]);
-
-  const handleClick = () => {
-    dispatch(removeUser());
-    blogService.setToken(null);
-    window.localStorage.clear();
-  };
-
-  if (user === null) {
-    return <Login />;
-  } else {
+  if (blogs.length === 0 || !blogs || (!chosenBlog && matchB)) {
     return (
-      <div>
+      <>
         <Notification />
-        <button onClick={() => navigate("/users")}>Users</button>
-        <button onClick={() => navigate("/")}>Blogs</button>
-        <button onClick={() => navigate("/create")}>create</button>
-        <h2>blogs</h2>
-        <>
-          <p>{user.username} is logged in</p>
-          <button onClick={handleClick}>log out</button>
-        </>
-        <Routes>
-          <Route
-            path='/create'
-            element={
-              <Togglable buttonLabel='New Blog'>
-                <CreateBlog></CreateBlog>
-              </Togglable>
-            }
-          />
-          <Route path='/' element={<Blogs />} />
-          <Route path='/users' element={<Users users={userData} />} />
-          <Route path='/user/:id' element={<User user={chosenUser} />}></Route>
-          <Route path='/blog/:id' element={<Blog blog={chosenBlog} />} />
-        </Routes>
-      </div>
+        <Loading />
+      </>
     );
   }
+
+  return (
+    <div>
+      <div className='container lg:p-12 '>
+        <Notification />
+        <Menu />
+        <Routes>
+          <Route path='/login' element={<Login />}></Route>
+          <Route path='/register' element={<Register />} />
+          <Route path='/' element={<Layout />}>
+            <Route path='/' element={<Blogs />} />
+            <Route path='/blog/:id' element={<Blog blog={chosenBlog} />} />
+            <Route path='/search' element={<Search />} />
+          </Route>
+        </Routes>
+      </div>
+    </div>
+  );
 };
 
 export default App;

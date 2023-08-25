@@ -26,7 +26,8 @@
     "lodash": "^4.17.21",
     "mongodb": "^5.7.0",
     "mongoose": "^7.4.0",
-    "mongoose-unique-validator": "^4.0.0"
+    "mongoose-unique-validator": "^4.0.0",
+    "validator": "^13.11.0"
   },
   "jest": {
     "testEnvironment": "node",

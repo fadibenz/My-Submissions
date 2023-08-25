@@ -1,11 +1,16 @@
 const blogsRouter = require("express").Router();
-const { response } = require("express");
-const blog = require("../models/blog");
+const { response, request } = require("express");
 const Blog = require("../models/blog");
 const User = require("../models/user");
 
 blogsRouter.get("/", async (request, response) => {
-  const blogs = await Blog.find({});
+  const blogs = await Blog.find({}).populate({
+    path: "comments",
+    populate: {
+      path: "user",
+      model: "User",
+    },
+  });
   response.status(200).json(blogs);
 });
 
@@ -17,7 +22,16 @@ blogsRouter.post("/", async (request, response) => {
   }
 
   const user = request.user;
-  const { title, author, url, likes = 0, comments = [] } = request.body;
+  const {
+    title,
+    author,
+    url,
+    likes = 0,
+    comments = [],
+    content,
+    date,
+    tags = [],
+  } = request.body;
 
   const blog = new Blog({
     title,
@@ -25,6 +39,10 @@ blogsRouter.post("/", async (request, response) => {
     url,
     likes,
     comments,
+    tags,
+    date,
+    tags,
+    content,
     user: user._id,
   });
   try {
@@ -57,29 +75,51 @@ blogsRouter.delete("/:id", async (request, response) => {
 });
 
 blogsRouter.put("/:id", async (request, response) => {
-  const body = request.body;
-
-  const blog = {
-    title: body.title,
-    author: body.author,
-    url: body.url,
-    likes: body.likes,
-    comments: body.comments,
-  };
-
   try {
+    const body = request.body;
+    const user = request.user;
+    if (!user) {
+      response.status(401).json({ error: "must be logged in" });
+    }
+
+    const blog = {
+      title: body.title,
+      author: body.author,
+      url: body.url,
+      likes: body.likes,
+      comments: body.comments.concat({
+        text: body.comment,
+        user: user._id,
+      }),
+    };
+
     const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, {
       new: true,
+    }).populate({
+      path: "comments",
+      populate: {
+        path: "user",
+        model: "User",
+      },
     });
+
     if (!updatedBlog) {
       response.status(404).json({ message: "Blog not found." });
     } else {
       response.json(updatedBlog);
     }
   } catch (error) {
-    response.status(400).json({ message: "Error updating blog likes." });
+    response.status(400).json({ message: "Error adding comment." });
   }
 });
 
+// blogsRouter.post("/:id/comment", async (request, response) => {
+//   const id = request.params.id;
+//   const user = request.user;
+//   const comment = {
+//     text: request
+//   }
+//   const blog
+// });
 
 module.exports = blogsRouter;

@@ -1,5 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import blogService from "../services/blogs";
+import { createNotification } from "./notificationReducer";
+import { createClass } from "./classReducer";
 
 const blogReducer = createSlice({
   name: "blogs",
@@ -13,11 +15,11 @@ const blogReducer = createSlice({
     },
     updateLike(state, action) {
       return state.map((f) =>
-        f.id === action.payload.id ? action.payload : f
+        f._id === action.payload._id ? action.payload : f
       );
     },
     updateBlogs(state, action) {
-      return state.filter((f) => f.id !== action.payload);
+      return state.filter((f) => f._id !== action.payload);
     },
   },
 });
@@ -27,9 +29,13 @@ export const { setBlogs, appendBlog, updateLike, updateBlogs } =
 
 export const intializeBlogs = () => {
   return async (dispatch) => {
-    const blogs = await blogService.getAll();
-    console.log("blogs", blogs);
-    dispatch(setBlogs(blogs));
+    const res = await blogService.getAll();
+    if (res.message) {
+      dispatch(createNotification(res.message, 5));
+      dispatch(createClass("error", 5));
+    } else {
+      dispatch(setBlogs(res));
+    }
   };
 };
 
@@ -54,11 +60,17 @@ export const deleteBlog = (id) => {
   };
 };
 
-export const addComment = (blog, comment)=>{
+export const addComment = (blog, comment) => {
   return async (dispatch) => {
-    const newBlog = await blogService.updateComments(blog, comment);
-    dispatch(updateLike(newBlog));
+    const res = await blogService.updateComments(blog, comment);
+    console.log("res", res);
+    if (res.error) {
+      dispatch(createNotification(res.error, 5));
+      dispatch(createClass("error", 5));
+    } else {
+      dispatch(updateLike(res));
+    }
   };
-}
+};
 
 export default blogReducer.reducer;

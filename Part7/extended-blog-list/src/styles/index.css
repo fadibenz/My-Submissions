@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-color: white;
+  color: white;
+}
+
+
+
+h2 {
+  font-size: 1.7rem;
+  margin-block: .5em;
+  color: rgb(84, 84, 84);
+  font-weight: 400;
+}
+
